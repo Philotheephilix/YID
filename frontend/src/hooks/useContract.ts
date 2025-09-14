@@ -4,6 +4,9 @@ import { useUserStore } from '@/stores/userStore';
 import YIDFactoryABI from '@/contracts/YIDFactory.json';
 import YIDUserABI from '@/contracts/YIDUser.json';
 
+
+// Import types to make global declarations available
+import "@/types";
 // Sepolia Network Configuration
 const SEPOLIA_CHAIN_ID = 11155111;
 const SEPOLIA_RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY';
@@ -31,6 +34,13 @@ export const useContract = () => {
   useEffect(() => {
     checkNetwork();
   }, [provider]);
+
+  // Check user registration when network becomes correct and wallet is connected
+  useEffect(() => {
+    if (isCorrectNetwork && walletAddress && provider) {
+      checkUserRegistration(walletAddress);
+    }
+  }, [isCorrectNetwork, walletAddress, provider]);
 
   const checkNetwork = async () => {
     if (!provider) return;
@@ -93,65 +103,11 @@ export const useContract = () => {
     }
   };
 
-  const connectWallet = async () => {
-    try {
-      if (!window.ethereum) {
-        throw new Error('MetaMask not installed');
-      }
-
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      });
-
-      if (accounts.length > 0) {
-        useUserStore.getState().setWalletAddress(accounts[0]);
-        useUserStore.getState().setConnected(true);
-        
-        // Check network after connecting
-        await checkNetwork();
-      }
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
-      setError('Failed to connect wallet');
-    }
-  };
-
   const validateContractAddress = () => {
     if (!YID_FACTORY_ADDRESS || YID_FACTORY_ADDRESS === '0x...' || !ethers.isAddress(YID_FACTORY_ADDRESS)) {
       throw new Error('YID Factory contract address not configured. Please deploy contracts and update .env.local');
     }
     return YID_FACTORY_ADDRESS;
-  };
-
-  const deployUserContract = async (name: string, email: string) => {
-    if (!signer) {
-      throw new Error('Wallet not connected');
-    }
-
-    if (!isCorrectNetwork) {
-      throw new Error('Please switch to Sepolia testnet');
-    }
-
-    try {
-      const factoryAddress = validateContractAddress();
-      
-      const factory = new ethers.Contract(
-        factoryAddress,
-        YIDFactoryABI.abi,
-        signer
-      );
-
-      const tx = await factory.deployUserContract(name, email);
-      await tx.wait();
-
-      // Get the deployed contract address
-      const userContractAddress = await factory.getUserContract(walletAddress);
-      
-      return userContractAddress;
-    } catch (error) {
-      console.error('Error deploying user contract:', error);
-      throw error;
-    }
   };
 
   const getUserContract = async (userAddress: string) => {
@@ -199,6 +155,118 @@ export const useContract = () => {
       };
     } catch (error) {
       console.error('Error getting user info:', error);
+      throw error;
+    }
+  };
+
+  // Check if user is already registered when wallet connects
+  const checkUserRegistration = async (userAddress: string) => {
+    try {
+      if (!provider || !isCorrectNetwork) return false;
+
+      const factoryAddress = validateContractAddress();
+      
+      const factory = new ethers.Contract(
+        factoryAddress,
+        YIDFactoryABI.abi,
+        provider
+      );
+
+      const contractAddress = await factory.getUserContract(userAddress);
+      
+      // Check if contract address is valid (not zero address)
+      if (!contractAddress || contractAddress === ethers.ZeroAddress) {
+        return false;
+      }
+
+      // Get user info from the contract
+      const userInfo = await getUserInfo(contractAddress);
+      
+      if (userInfo) {
+        // Set user data in store
+        const { setUser, setUserContract } = useUserStore.getState();
+        
+        setUser({
+          name: userInfo.name,
+          email: userInfo.email,
+          isActive: userInfo.isActive,
+          createdAt: userInfo.createdAt,
+          contractAddress: userInfo.contractAddress,
+        });
+
+        setUserContract({
+          address: userInfo.contractAddress,
+          name: userInfo.name,
+          email: userInfo.email,
+          isActive: userInfo.isActive,
+          createdAt: userInfo.createdAt,
+        });
+
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error checking user registration:', error);
+      return false;
+    }
+  };
+
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) {
+        throw new Error('MetaMask not installed');
+      }
+
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+
+      if (accounts.length > 0) {
+        useUserStore.getState().setWalletAddress(accounts[0]);
+        useUserStore.getState().setConnected(true);
+        
+        // Check network after connecting
+        await checkNetwork();
+        
+        // Check if user is already registered and auto-load their data
+        if (isCorrectNetwork) {
+          await checkUserRegistration(accounts[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+      setError('Failed to connect wallet');
+    }
+  };
+
+  const deployUserContract = async (name: string, email: string) => {
+    if (!signer) {
+      throw new Error('Wallet not connected');
+    }
+
+    if (!isCorrectNetwork) {
+      throw new Error('Please switch to Sepolia testnet');
+    }
+
+    try {
+      const factoryAddress = validateContractAddress();
+      
+      const factory = new ethers.Contract(
+        factoryAddress,
+        YIDFactoryABI.abi,
+        signer
+      );
+
+      const tx = await factory.deployUserContract(name, email);
+      await tx.wait();
+
+      // Get the deployed contract address
+      const userContractAddress = await factory.getUserContract(walletAddress);
+      
+      return userContractAddress;
+    } catch (error) {
+      console.error('Error deploying user contract:', error);
       throw error;
     }
   };
@@ -262,5 +330,6 @@ export const useContract = () => {
     getUserInfo,
     updateUserInfo,
     deactivateUser,
+    checkUserRegistration,
   };
 };
