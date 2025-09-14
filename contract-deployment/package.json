@@ -1,0 +1,19 @@
+{
+  "name": "yid-contracts",
+  "version": "1.0.0",
+  "description": "Simple YID smart contracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy-yid.ts",
+    "deploy:sepolia": "hardhat run scripts/deploy-yid.ts --network sepolia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.17.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1"
+  }
+}

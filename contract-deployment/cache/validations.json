@@ -1,0 +1,245 @@
+{
+  "version": "3.4",
+  "log": [
+    {
+      "@openzeppelin/contracts/access/Ownable.sol:Ownable": {
+        "src": "@openzeppelin/contracts/access/Ownable.sol:20",
+        "inherit": [
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "owner()",
+          "renounceOwnership()",
+          "transferOwnership(address)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "Ownable",
+            "src": "@openzeppelin/contracts/access/Ownable.sol:38"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin/contracts/access/Ownable.sol:21"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "@openzeppelin/contracts/utils/Context.sol:Context": {
+        "src": "@openzeppelin/contracts/utils/Context.sol:16",
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/YIDFactory.sol:YIDFactory": {
+        "src": "contracts/YIDFactory.sol:11",
+        "version": {
+          "withMetadata": "7bb15666e84a60008c945bc72111f7a77c98791108437ad3b4a946367bdd9a8a",
+          "withoutMetadata": "75fba5054aef56a5e0f24ee81e7efcf078a85ff659aeb48fe62c58ae652d0b39",
+          "linkedWithoutMetadata": "75fba5054aef56a5e0f24ee81e7efcf078a85ff659aeb48fe62c58ae652d0b39"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "deployUserContract(string,string)",
+          "getUserContract(address)",
+          "hasUserContract(address)",
+          "getAllContracts()",
+          "getContractCount()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "YIDFactory",
+            "src": "contracts/YIDFactory.sol:16"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin/contracts/access/Ownable.sol:21"
+            },
+            {
+              "label": "userContracts",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_mapping(t_address,t_address)",
+              "contract": "YIDFactory",
+              "src": "contracts/YIDFactory.sol:19"
+            },
+            {
+              "label": "allContracts",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_array(t_address)dyn_storage",
+              "contract": "YIDFactory",
+              "src": "contracts/YIDFactory.sol:22"
+            },
+            {
+              "label": "totalContracts",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_uint256",
+              "contract": "YIDFactory",
+              "src": "contracts/YIDFactory.sol:25"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_mapping(t_address,t_address)": {
+              "label": "mapping(address => address)",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      },
+      "contracts/YIDUser.sol:YIDUser": {
+        "src": "contracts/YIDUser.sol:10",
+        "version": {
+          "withMetadata": "495b29db8cdef013c2f83d52d2886920d972b6673ccd88a3f23234e3781cc8fc",
+          "withoutMetadata": "9a5df5f4c479f7a2a104c63c29f9593de5f6700f3edc556c71162592c4a7bd41",
+          "linkedWithoutMetadata": "9a5df5f4c479f7a2a104c63c29f9593de5f6700f3edc556c71162592c4a7bd41"
+        },
+        "inherit": [
+          "@openzeppelin/contracts/access/Ownable.sol:Ownable",
+          "@openzeppelin/contracts/utils/Context.sol:Context"
+        ],
+        "libraries": [],
+        "methods": [
+          "(string,string)",
+          "updateUser(string,string)",
+          "deactivate()",
+          "getUserInfo()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "YIDUser",
+            "src": "contracts/YIDUser.sol:27"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "_owner",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_address",
+              "contract": "Ownable",
+              "src": "@openzeppelin/contracts/access/Ownable.sol:21"
+            },
+            {
+              "label": "name",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_string_storage",
+              "contract": "YIDUser",
+              "src": "contracts/YIDUser.sol:13"
+            },
+            {
+              "label": "email",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_string_storage",
+              "contract": "YIDUser",
+              "src": "contracts/YIDUser.sol:14"
+            },
+            {
+              "label": "isActive",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_bool",
+              "contract": "YIDUser",
+              "src": "contracts/YIDUser.sol:15"
+            },
+            {
+              "label": "createdAt",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_uint256",
+              "contract": "YIDUser",
+              "src": "contracts/YIDUser.sol:16"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_string_storage": {
+              "label": "string",
+              "numberOfBytes": "32"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.20"
+      }
+    }
+  ]
+}
